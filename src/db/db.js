@@ -15,7 +15,7 @@ export const knex = require("knex")({
 });
 
 // TODO: use path to join this path
-const csvPath = "/Users/matthewbouchard/workspace/cognizant_api/albums.csv";
+const csvPath = "./albums.csv";
 
 const seedDB = async filePath => {
   let results = [];
@@ -28,10 +28,10 @@ const seedDB = async filePath => {
     })
     .on("end", async () => {
       try {
-        // await database.albums.insert(results);
         await knex("albums").insert(results);
+        console.log("database seeded");
       } catch (err) {
-        console.log("probelms with SEEDING", err);
+        console.log("there was a problem sedding the database", err);
       }
     });
 };

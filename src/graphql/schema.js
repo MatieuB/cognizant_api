@@ -3,8 +3,6 @@ import { makeExecutableSchema } from "apollo-server";
 
 import * as albumService from "../services/album_service.js";
 
-const testAlbum = { album: "test", artist: "test", genre: "pop", year: "1974" };
-
 const SchemaDefinition = gql`
   schema {
     query: RootQuery
