@@ -1,0 +1,40 @@
+{
+  "name": "gqlapi",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "@types/graphql": "^14.0.3",
+    "@types/massive": "^5.4.0",
+    "apollo-server": "^2.2.6",
+    "apollo-server-express": "^2.2.6",
+    "apollo-upload-server": "^7.1.0",
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "csv-parser": "^2.1.0",
+    "debug": "~2.6.3",
+    "dotenv": "^6.2.0",
+    "express": "~4.15.2",
+    "express-graphql": "^0.7.1",
+    "graphql": "^14.0.2",
+    "graphql-binding": "^2.3.7",
+    "graphql-extensions": "^0.3.6",
+    "graphql-playground-middleware-express": "^1.7.8",
+    "graphql-subscriptions": "^1.0.0",
+    "graphql-yoga": "^1.16.7",
+    "jade": "~1.11.0",
+    "knex": "^0.16.2",
+    "massive": "^5.7.0",
+    "morgan": "~1.8.1",
+    "pg-native": "^3.0.0",
+    "serve-favicon": "~2.4.2",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0"
+  }
+}
