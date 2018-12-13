@@ -141,19 +141,24 @@ const SchemaDefinition = gql`
 `;
 
 const QueryTypes = `
-  hello: String
   "Returns a list of all albums"
   all: [Album]
   "Returns a list of unique artists with their albums"
   artists: [Artist]
+  "Search by name for an album"
   album(name: String!): Album
+  "Returns albums sorted by genre and popularity"
   popularGenres: [Genre]
+  "Returns albums sorted by year and popularity"
   popularYears: [Year]
 `;
 
 const MutationTypes = `
+  "Create a new album"
   new(newAlbum: AlbumInput!): Response
+  "Delete an album by ID"
   delete(id: String!): Response
+  "Update an album by ID"
   update(id: String!, updates: AlbumInput ): Response
 `;
 
@@ -225,7 +230,6 @@ const ResponseType = gql`
 
 const queryResolvers = {
   RootQuery: {
-    hello: () => "Hello world!",
     all: () => albumService.all(),
     artists: () => albumService.artists(),
     album: (_, { name }) => albumService.getAlbum(name),
