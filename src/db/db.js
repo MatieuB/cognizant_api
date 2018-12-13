@@ -15,7 +15,6 @@ export const knex = require("knex")({
   }
 });
 
-// TODO: use path to join this path
 const csvPath = "./albums.csv";
 
 const seedDB = async filePath => {
