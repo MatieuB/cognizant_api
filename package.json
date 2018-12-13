@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon --exec babel-node ./app",
-    "test": "mocha --compilers js:@babel/register ./test/api.spec",
-    "mocha": "start-server-and-test start http://localhost:4000 test"
+    "test": "mocha --compilers js:@babel/register ./test/api.spec"
   },
   "dependencies": {
     "@babel/cli": "^7.2.0",
@@ -13,19 +12,16 @@
     "@babel/node": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
     "@babel/register": "^7.0.0",
-    "@types/graphql": "^14.0.3",
-    "@types/massive": "^5.4.0",
     "apollo-server": "^2.2.6",
     "apollo-server-express": "^2.2.6",
     "apollo-upload-server": "^7.1.0",
-    "axios": "^0.18.0",
-    "body-parser": "~1.17.1",
+    "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "cookie-parser": "~1.4.3",
     "csv-parser": "^2.1.0",
     "debug": "~2.6.3",
     "dotenv": "^6.2.0",
-    "express": "~4.15.2",
+    "express": "^4.16.4",
     "express-graphql": "^0.7.1",
     "graphql": "^14.0.2",
     "graphql-extensions": "^0.3.6",
@@ -40,13 +36,11 @@
     "logger": "0.0.1",
     "massive": "^5.7.0",
     "mocha": "^5.2.0",
-    "morgan": "~1.8.1",
+    "morgan": "^1.9.1",
     "nodemon": "^1.18.8",
     "pg-native": "^3.0.0",
     "serve-favicon": "~2.4.2",
     "start-server-and-test": "^1.7.11",
-    "supertest": "^3.3.0",
-    "ts-node": "^7.0.1",
-    "typescript": "^3.2.2"
+    "supertest": "^3.3.0"
   }
 }
