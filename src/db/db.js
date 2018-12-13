@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import csv from "csv-parser";
 
+import app from "../../app";
 const googleConnection = "35.230.85.121";
 
 export const knex = require("knex")({
@@ -29,7 +30,9 @@ const seedDB = async filePath => {
     .on("end", async () => {
       try {
         await knex("albums").insert(results);
-        console.log("database seeded");
+
+        console.log("Database seeded");
+        app.emit("appStarted");
       } catch (err) {
         console.log("there was a problem sedding the database", err);
       }
@@ -40,5 +43,3 @@ export const initDB = async () => {
   await knex("albums").del();
   await seedDB(csvPath);
 };
-
-initDB();

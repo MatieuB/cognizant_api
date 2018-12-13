@@ -1,21 +1,27 @@
 import express from "express";
 import path from "path";
-import path from "path";
-import logger from "logger";
-import cookieParser from "logger";
-import bodyParser from "bodyParser";
-require("dotenv").config();
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+import { ApolloServer } from "apollo-server-express";
+
+import { schema } from "./src/graphql/schema";
+import { initDB } from "./src/db/db";
+
+initDB();
 
 const app = express();
 
-app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "./")));
+app.use(express.static(path.join(__dirname, "./public")));
+
+const server = new ApolloServer({ schema });
+server.applyMiddleware({ app });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function({ body }, res, next) {
+  console.log("req", body);
   var err = new Error("Not Found");
   err.status = 404;
   next(err);
@@ -30,7 +36,11 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.json({ error: "error" });
 });
 
+app.listen(4000, () => {
+  // app.emit("appStarted");
+  console.log("Running a GraphQL API server at localhost:4000/graphql");
+});
 export default app;
