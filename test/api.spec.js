@@ -121,4 +121,161 @@ describe("-- Integration Tests --", () => {
         });
     });
   });
+
+  describe("-- MUTATION newAlbum --", () => {
+    const testAlbum = {
+      album: "get schifty",
+      artist: "rick sanchez",
+      genre: "dance",
+      year: "2016"
+    };
+
+    const albumMutation = `mutation{
+      newAlbum(newAlbum: {
+        album: "get schifty",
+        artist: "rick sanchez",
+        year: "2016",
+        genre: "dance"
+      }){
+        success
+        error
+        album { artist year genre album }
+        created
+        removed
+        updated
+      }
+  }`;
+    it("should add a new album to the db", () => {
+      agent
+        .post(graphqlUrl)
+        .send({ query: albumMutation })
+        .expect(200)
+        .expect(({ body: { data: { newAlbum } } }) => {
+          expect(newAlbum).to.deep.equal({
+            success: true,
+            error: false,
+            album: testAlbum,
+            created: 1,
+            updated: null,
+            removed: null
+          });
+        });
+      agent
+        .post(graphqlUrl)
+        .send({ query: `query { all ${albumFields}}` })
+        .expect(200)
+        .expect(({ body }) => {
+          expect(body.data.all.length).to.equal(104);
+        });
+    });
+  });
+
+  describe("-- MUTATION deleteAlbum --", () => {
+    const albumMutation = id => `mutation {
+      deleteAlbum(id: ${id}){
+        success
+        error
+        album { artist id }
+        created
+        removed
+        updated
+      }
+  }`;
+    it("should delete by id", () => {
+      let album;
+
+      return agent
+        .post(graphqlUrl)
+        .send({ query: `query { all { id album }}` })
+        .expect(200)
+        .expect(({ body: { data: { all } } }) => {
+          expect(all.length).to.equal(103);
+          album = all[0];
+        });
+      agent
+        .post(graphqlUrl)
+        .send({ query: albumMutation(album.id) })
+        .expect(200)
+        .expect(({ body: { data: { deleteAlbum } } }) => {
+          expect(deleteAlbum).to.deep.equal({
+            album,
+            success: true,
+            error: false,
+            created: null,
+            updated: null,
+            removed: 1
+          });
+        });
+      agent
+        .post(graphqlUrl)
+        .send({ query: `query { all { id album }}` })
+        .expect(200)
+        .expect(({ body: { data: { all } } }) => {
+          expect(all.length).to.equal(102);
+        });
+    });
+
+    describe("-- MUTATION update --", () => {
+      const testAlbum = {
+        album: "get schifty",
+        artist: "rick sanchez",
+        genre: "dance",
+        year: "2016"
+      };
+
+      const albumMutation = id => `mutation{
+      update(id: ${id}, updates: {
+        album: "get down",
+        artist: "morty",
+        year: "3000",
+        genre: "dance"
+      }){
+        success
+        error
+        album { artist year genre album }
+        created
+        removed
+        updated
+      }
+  }`;
+      const update = {
+        artist: "morty",
+        year: "3000",
+        genre: "dance",
+        album: "get down"
+      };
+
+      it("should update by id", () => {
+        let album;
+        return agent
+          .post(graphqlUrl)
+          .send({ query: `query { all { id album }}` })
+          .expect(200)
+          .expect(({ body: { data: { all } } }) => {
+            album = all[0];
+          });
+        agent
+          .post(graphqlUrl)
+          .send({ query: albumMutation(album.id) })
+          .expect(200)
+          .expect(({ body: { data: { update } } }) => {
+            expect(update).to.deep.equal({
+              album: update,
+              success: true,
+              error: false,
+              created: null,
+              updated: 1,
+              removed: 1
+            });
+          });
+        agent
+          .post(graphqlUrl)
+          .send({ query: `query { album(name: "get down") ${albumFields} }` })
+          .expect(200)
+          .expect(({ body: { data: { album } } }) => {
+            expect(album).to.equal(update);
+          });
+      });
+    });
+  });
 });

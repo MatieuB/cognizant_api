@@ -25,9 +25,9 @@ const QueryTypes = `
 
 const MutationTypes = `
   "Create a new album"
-  new(newAlbum: AlbumInput!): Response
+  newAlbum(newAlbum: AlbumInput!): Response
   "Delete an album by ID"
-  delete(id: String!): Response
+  deleteAlbum(id: String!): Response
   "Update an album by ID"
   update(id: String!, updates: AlbumInput ): Response
 `;
@@ -109,8 +109,8 @@ const queryResolvers = {
 };
 const mutationResolvers = {
   RootMutation: {
-    new: (_, { newAlbum }) => albumService.newAlbum(newAlbum),
-    delete: (_, { id }) => albumService.deleteAlbum(id),
+    newAlbum: (_, { newAlbum }) => albumService.newAlbum(newAlbum),
+    deleteAlbum: (_, { id }) => albumService.deleteAlbum(id),
     update: (_, { id, updates }) => albumService.updateAlbum(id, updates)
   }
 };

@@ -43,4 +43,5 @@ app.listen(4000, () => {
   // app.emit("appStarted");
   console.log("Running a GraphQL API server at localhost:4000/graphql");
 });
+
 export default app;
