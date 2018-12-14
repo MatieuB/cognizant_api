@@ -15,6 +15,8 @@ const QueryTypes = `
   all: [Album]
   "Returns a list of unique artists with their albums"
   artists: [Artist]
+  "Search for an artist and view their discography"
+  artist(name: String!): Artist
   "Search by name for an album"
   album(name: String!): Album
   "Returns albums sorted by genre and popularity"
@@ -102,6 +104,7 @@ const queryResolvers = {
   RootQuery: {
     all: () => albumService.all(),
     artists: () => albumService.artists(),
+    artist: (_, { name }) => albumService.getArtist(name),
     album: (_, { name }) => albumService.getAlbum(name),
     popularGenres: () => albumService.getPopularGenres(),
     popularYears: () => albumService.getAlbumsByYear()

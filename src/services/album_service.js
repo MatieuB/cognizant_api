@@ -21,6 +21,18 @@ export const artists = async () => {
   return parseByField("artist");
 };
 
+export const getArtist = async name => {
+  const records = await knex("albums").where(
+    knex.raw('LOWER("artist") = ? ', name.toLowerCase())
+  );
+
+  return {
+    artist: records[0].artist,
+    albumCount: records.length,
+    albums: records
+  };
+};
+
 export const newAlbum = async newAlbum => {
   const [insertResult] = await knex("albums")
     .insert(newAlbum)
@@ -35,9 +47,9 @@ export const newAlbum = async newAlbum => {
 };
 
 export const getAlbum = async name => {
-  const [foundAlbum] = await knex("albums")
-    .where({ album: name })
-    .select("*");
+  const [foundAlbum] = await knex("albums").where(
+    knex.raw('LOWER("album") = ? ', name.toLowerCase())
+  );
 
   return foundAlbum;
 };

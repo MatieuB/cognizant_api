@@ -43,6 +43,21 @@ describe("-- Integration Tests --", () => {
         });
     });
 
+    it("should be case insenstive", () => {
+      return agent
+        .post(graphqlUrl)
+        .send({
+          query: `query { album(name: "dangerous") ${albumFields} }`
+        })
+        .expect(200)
+        .expect(({ body: { data: { album } } }) => {
+          expect(album.artist).to.equal("Michael Jackson");
+          expect(album.genre).to.equal("Pop");
+          expect(album.year).to.equal("1991");
+          expect(album.album).to.equal("Dangerous");
+        });
+    });
+
     it("should return null if not in the list", () => {
       return agent
         .post(graphqlUrl)
@@ -52,6 +67,61 @@ describe("-- Integration Tests --", () => {
         .expect(200)
         .expect(({ body: { data: { album } } }) => {
           expect(album).to.be.null;
+        });
+    });
+  });
+
+  describe("-- QUERY artist --", () => {
+    const artistResponse = {
+      artist: "Michael Jackson",
+      albumCount: 2,
+      albums: [
+        {
+          album: "Thriller",
+          year: "1982",
+          genre: "Pop"
+        },
+        {
+          album: "Dangerous",
+          year: "1991",
+          genre: "Pop"
+        }
+      ]
+    };
+
+    it("should return an artist with their albums", () => {
+      return agent
+        .post(graphqlUrl)
+        .send({
+          query: `query { artist(name: "Michael Jackson") { artist albumCount albums { album year genre } }}`
+        })
+        .expect(200)
+        .expect(({ body: { data: { artist } } }) => {
+          expect(artist).to.deep.equal(artistResponse);
+        });
+    });
+
+    it("should be case insenstive", () => {
+      return agent
+        .post(graphqlUrl)
+        .send({
+          query: `query { artist(name: "michael jackson") { artist albumCount albums { album year genre } }}`
+        })
+        .expect(200)
+        .expect(({ body: { data: { artist } } }) => {
+          expect(artist).to.deep.equal(artistResponse);
+        });
+    });
+
+    it("return null if an artist does not exist", () => {
+      return agent
+        .post(graphqlUrl)
+        .send({
+          query: `query { artist(name: "michael pollan") { artist albumCount albums { album year genre } }}`
+        })
+        .expect(200)
+        .expect(({ body: { data: { artist } } }) => {
+          expect(artist).to.be.null;
         });
     });
   });
@@ -214,68 +284,68 @@ describe("-- Integration Tests --", () => {
           expect(all.length).to.equal(102);
         });
     });
+  });
 
-    describe("-- MUTATION update --", () => {
-      const testAlbum = {
-        album: "get schifty",
-        artist: "rick sanchez",
-        genre: "dance",
-        year: "2016"
-      };
+  describe("-- MUTATION update --", () => {
+    const testAlbum = {
+      album: "get schifty",
+      artist: "rick sanchez",
+      genre: "dance",
+      year: "2016"
+    };
 
-      const albumMutation = id => `mutation{
-      update(id: ${id}, updates: {
-        album: "get down",
-        artist: "morty",
-        year: "3000",
-        genre: "dance"
-      }){
-        success
-        error
-        album { artist year genre album }
-        created
-        removed
-        updated
-      }
-  }`;
-      const update = {
-        artist: "morty",
-        year: "3000",
-        genre: "dance",
-        album: "get down"
-      };
+    const albumMutation = id => `mutation{
+        update(id: ${id}, updates: {
+          album: "get down",
+          artist: "morty",
+          year: "3000",
+          genre: "dance"
+        }){
+          success
+          error
+          album { artist year genre album }
+          created
+          removed
+          updated
+        }
+    }`;
+    const update = {
+      artist: "morty",
+      year: "3000",
+      genre: "dance",
+      album: "get down"
+    };
 
-      it("should update by id", () => {
-        let album;
-        return agent
-          .post(graphqlUrl)
-          .send({ query: `query { all { id album }}` })
-          .expect(200)
-          .expect(({ body: { data: { all } } }) => {
-            album = all[0];
+    it("should update by id", () => {
+      let album;
+      return agent
+        .post(graphqlUrl)
+        .send({ query: `query { all { id album }}` })
+        .expect(200)
+        .expect(({ body: { data: { all } } }) => {
+          album = all[0];
+        });
+      agent
+        .post(graphqlUrl)
+        .send({ query: albumMutation(album.id) })
+        .expect(200)
+        .expect(({ body: { data: { update } } }) => {
+          expect(update).to.deep.equal({
+            album: update,
+            success: true,
+            error: false,
+            created: null,
+            updated: 1,
+            removed: 1
           });
-        agent
-          .post(graphqlUrl)
-          .send({ query: albumMutation(album.id) })
-          .expect(200)
-          .expect(({ body: { data: { update } } }) => {
-            expect(update).to.deep.equal({
-              album: update,
-              success: true,
-              error: false,
-              created: null,
-              updated: 1,
-              removed: 1
-            });
-          });
-        agent
-          .post(graphqlUrl)
-          .send({ query: `query { album(name: "get down") ${albumFields} }` })
-          .expect(200)
-          .expect(({ body: { data: { album } } }) => {
-            expect(album).to.equal(update);
-          });
-      });
+        });
+      agent
+        .post(graphqlUrl)
+        .send({ query: `query { album(name: "get down") ${albumFields} }` })
+        .expect(200)
+        .expect(({ body: { data: { album } } }) => {
+          expect(album).to.equal(update);
+        });
     });
   });
 });
